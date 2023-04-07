@@ -6,7 +6,6 @@ const baudRateOptions = ["9600", "19200", "38400", "57600", "115200", ""];
 
 const Dashboard = () => {
   const [angle, setAngle] = useState(50);
-  console.log("🚀 ~ file: dashboard.tsx:9 ~ Dashboard ~ angle:", angle)
   const [baudRate, setBaudRate] = useState<string>(
     typeof localStorage !== 'undefined' ? localStorage.getItem('baudRate') || baudRateOptions[0] : baudRateOptions[0]
   );
@@ -49,6 +48,7 @@ const Dashboard = () => {
 
   return (
     <div style={{ width: '100%', height: '100vh' }}>
+      <div>Current Cube Angle: {angle.toFixed(1)}°</div>
       <div>
         <label htmlFor="baudRate">Baud Rate:</label>
         <select id="baudRate" name="baudRate" value={baudRate} onChange={handleBaudRateChange}>
