@@ -18,7 +18,7 @@ const Cube = ({ angle, ...rest }: CubeProps) => {
   useFrame(({ camera }) => {
     const cubeAnimation = cubeAnimationRef.current;
     if (cubeAnimation) {
-      cubeAnimation.rotation.z = THREE.MathUtils.degToRad(angle);
+      cubeAnimation.rotation.z = -THREE.MathUtils.degToRad(angle);
       // Update camera position and rotation to Right-Hand coordinate system (+x -> forward, +y ->left, +z -> up)
       camera.position.set(0, 8, 0);
       camera.up.set(0, 0, 1);
