@@ -2,8 +2,8 @@ import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useState } from 'react';
 import Cube from './cube';
 import mockDevices from '../utils/mockDevices';
-
-const baudRateSelect = [9600, 19200, 38400, 57600, 115200];
+import Devices from './devices';
+import BaudRate from './baudrate';
 
 const Dashboard = () => {
   const [angle, setAngle] = useState(50);
@@ -80,56 +80,36 @@ const Dashboard = () => {
       }, 1000 / baudRate);
       setIntervalId(newIntervalId);
     }
-  }, [selectedDevice, baudRates]);
+  }, [selectedDevice, baudRates]); 
 
 
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <div>Current Cube Angle: {angle.toFixed(1)}°</div>
-
-      <div>
-        <label htmlFor="device">Select the Device:</label>
-        <select
-          id="device"
-          name="device"
-          value={selectedDevice}
-          onChange={handleDeviceChange}
-          disabled={intervalId !== null}
-        >
-          {Object.keys(mockDevices).map(device => (
-            <option key={device} value={device}>
-              {device}
-            </option>
-          ))}
-        </select>
-        <button onClick={handleConnect}>{intervalId !== null ? 'Disconnect' : 'Connect'}</button>
-      </div>
-
-      <div>
-        <label htmlFor="baudRate">Select the Baud Rate:</label>
-        <select
-          id="baudRate"
-          name="baudRate"
-          value={baudRates[selectedDevice]}
-          onChange={handleBaudRateChange}
-        >
-          {baudRateSelect.map(baudRate => (
-            <option key={baudRate} value={baudRate}>
-              {baudRate}
-            </option>
-          ))}
-        </select>
-      </div>
-
+  
+      <Devices
+        selectedDevice={selectedDevice}
+        handleDeviceChange={handleDeviceChange}
+        intervalId={intervalId}
+        handleConnect={handleConnect}
+      />
+  
+      <BaudRate
+        selectedDevice={selectedDevice}
+        baudRates={baudRates}
+        handleBaudRateChange={handleBaudRateChange}
+      />
+  
       <Suspense fallback={null}>
         <Canvas shadows>
           <ambientLight intensity={0.5} />
           <pointLight position={[2, 5, 2]} intensity={1} />
-           <Cube angle={angle} />
+          <Cube angle={angle} />
         </Canvas>
       </Suspense>
     </div>
   );
+  
 };
 
 export default Dashboard;
