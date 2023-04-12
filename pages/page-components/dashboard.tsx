@@ -1,105 +1,181 @@
+import Cube from './cube';
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useState } from 'react';
-import Cube from './cube';
-import mockDevices from '../utils/mockDevices';
-import Devices from './devices';
-import BaudRate from './baudrate';
 
-const Dashboard = () => {
+const BaudRates = [9600, 19200, 38400, 57600, 115200];
+
+type DeviceInfo = {
+  path: string;
+  vendorId: string;
+  productId: string;
+};
+
+function Dashboard() {
+  const [baudRate, setBaudRate] = useState(BaudRates[0]);
+  const [devices, setDevices] = useState<DeviceInfo[]>([]);
   const [angle, setAngle] = useState(50);
-  const [baudRates, setBaudRates] = useState<Record<string, number>>(
-    typeof localStorage !== 'undefined' ? JSON.parse(localStorage.getItem('baudRates') || '{}') : {}
-  );
-  const [selectedDevice, setSelectedDevice] = useState<string>(Object.keys(mockDevices)[0]);
-  const [intervalId, setIntervalId] = useState<NodeJS.Timer | null>(null);
+  const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const fetchDevices = async () => {
+      const response = await fetch("/api/list");
+      const data = await response.json();
+      setDevices(data);
+    };
+
+    fetchDevices();
+  }, []);
 
   /**
-   * Handles the change of the baud rate of the device
-   * @param event 
-   * @returns 
+   * Read data from the connected device and update the angle
    */
-  const handleBaudRateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newBaudRate = parseInt(event.target.value);
-    if (isNaN(newBaudRate)) {
-      return;
+  const readData = async () => {
+    const readResponse = await fetch("/api/read", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        devicePath: selectedDevice,
+      }),
+    });
+
+    const readData = await readResponse.json();
+    setAngle(readData.angle);
+  };
+
+  /**
+   * Updates the Intervale
+   */
+  const updateInterval = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
     }
-    setBaudRates(prevBaudRates => ({ ...prevBaudRates, [selectedDevice]: newBaudRate }));
-    localStorage.setItem('baudRates', JSON.stringify({ ...baudRates, [selectedDevice]: newBaudRate }));
+
+    const interval = (baudRate / 115200) * 1000;
+    const newIntervalId = setInterval(readData, interval);
+    setIntervalId(newIntervalId);
+  };
+
+  /**
+   * Update the Baud Rate value
+   */
+  const updateBaudRate = async () => {
+    if (selectedDevice) {
+      const response = await fetch("/api/update-baudrate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          devicePath: selectedDevice,
+          baudRate,
+        }),
+      });
+  
+      const data = await response.json();
+      console.log("updateBaudRate:", data.message);
+    }
   };
   
+
   /**
-   * Handles the device selection
-   * @param event 
+   * Handles the baud rate changing value
+   * @param event - the baud rate value
    */
-  const handleDeviceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newDevice = event.target.value;
-    setSelectedDevice(newDevice);
-    setBaudRates(prevBaudRates => {
-      const defaultBaudRate = mockDevices[newDevice];
-      return { ...prevBaudRates, [newDevice]: defaultBaudRate };
-    });
+  const handleBaudRateChange = (event: { target: { value: string; }; }) => {
+    setBaudRate(parseInt(event.target.value, 10));
+  
+    if (isConnected) {
+      updateBaudRate(); // Update the baud rate for the connected device
+      updateInterval(); // Update the reading interval
+    }
+  }; 
+
+  /**
+   * Handles the device changing value
+   * @param event - the device value
+   */
+  const handleDeviceChange = (event: { target: { value: string; }; }) => {
+    setSelectedDevice(event.target.value);
   };
 
   /**
-   * Connectes and disconnect the device
+   * Handles the connection to a specific device in the serial port
    */
-  const handleConnect = () => {
-    if (intervalId !== null) {
+  const connectToSerialPort = async () => {
+    if (selectedDevice) {
+      const response = await fetch("/api/connect", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          devicePath: selectedDevice,
+          baudRate,
+        }),
+      });
+  
+      const data = await response.json();
+      console.log(data.message);
+  
+      // Calculate interval based on the selected baud rate
+      const interval = (baudRate / 115200) * 1000;
+  
+      // Periodically read data from the device at different intervals based on the baud rate
+      const newIntervalId = setInterval(readData, interval);
+      setIntervalId(newIntervalId);
+      setIsConnected(true);
+    }
+  };  
+
+  /**
+   * Handles the disconnection of the device
+   */
+  const disconnect = () => {
+    if (intervalId) {
       clearInterval(intervalId);
       setIntervalId(null);
-    } else {
-      const baudRate = baudRates[selectedDevice] ?? mockDevices[selectedDevice];
-      console.log("🚀 ~ file: dashboard.tsx:35 ~ handleConnect ~ baudRate:", baudRate)
-      const newIntervalId = setInterval(() => {
-        setAngle(angle => {
-          let newAngle = angle + 360 / baudRate;
-          if (newAngle >= 360) {
-            newAngle -= 360;
-          }
-          return newAngle;
-        });
-      }, 1000 / baudRate);
-      setIntervalId(newIntervalId);
     }
+    setIsConnected(false);
+    setAngle(0);
   };
-
-  // Reset angle and clear interval when selected device changes
-  useEffect(() => {
-    if (intervalId !== null) {
-      clearInterval(intervalId);
-
-      const baudRate = baudRates[selectedDevice] ?? mockDevices[selectedDevice];
-      const newIntervalId = setInterval(() => {
-        setAngle(angle => {
-          let newAngle = angle + 360 / baudRate;
-          if (newAngle >= 360) {
-            newAngle -= 360;
-          }
-          return newAngle;
-        });
-      }, 1000 / baudRate);
-      setIntervalId(newIntervalId);
-    }
-  }, [selectedDevice, baudRates]); 
-
-
+  
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <div>Current Cube Angle: {angle.toFixed(1)}°</div>
-  
-      <Devices
-        selectedDevice={selectedDevice}
-        handleDeviceChange={handleDeviceChange}
-        intervalId={intervalId}
-        handleConnect={handleConnect}
-      />
-  
-      <BaudRate
-        selectedDevice={selectedDevice}
-        baudRates={baudRates}
-        handleBaudRateChange={handleBaudRateChange}
-      />
-  
+
+      <div>
+        <select value={baudRate} onChange={handleBaudRateChange}>
+          {BaudRates.map((rate) => (
+            <option key={rate} value={rate}>
+              {rate}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <select value={selectedDevice || ""} onChange={handleDeviceChange} disabled={isConnected}>
+          <option value="" disabled>
+            Select a device
+          </option>
+          {devices.map((device) => (
+            <option key={device.path} value={device.path}>
+              {device.path}
+            </option>
+          ))}
+        </select>
+        {!isConnected && (
+          <button onClick={connectToSerialPort}>Connect</button>
+        )}
+        {isConnected && (
+          <button onClick={disconnect}>Disconnect</button>
+        )}
+      </div>
+
       <Suspense fallback={null}>
         <Canvas shadows>
           <ambientLight intensity={0.5} />
@@ -109,7 +185,7 @@ const Dashboard = () => {
       </Suspense>
     </div>
   );
-  
-};
+
+}
 
 export default Dashboard;
