@@ -29,15 +29,22 @@ export const connectToSerialPort = async (
     const data = await response.json();
     console.log(data.message);
 
-    // Calculate interval based on the selected baud rate
-    const interval = (baudRate / 115200) * 1000;
+    if (response.ok) {
+      // Calculate interval based on the selected baud rate
+      const interval = (baudRate / 115200) * 1000;
 
-    // Periodically read data from the device at different intervals based on the baud rate
-    const newIntervalId = setInterval(readData(selectedDevice, setAngle), interval) as unknown as NodeJS.Timeout;
-    setIntervalId(newIntervalId);
-    setIsConnected(true);
+      // Periodically read data from the device at different intervals based on the baud rate
+      const newIntervalId = setInterval(readData(selectedDevice, setAngle), interval) as unknown as NodeJS.Timeout;
+      setIntervalId(newIntervalId);
+      return true;
+    } else {
+      return false;
+    }
   }
-};
+  return false;
+}
+
+
 
 /**
  * Update the Baud Rate value

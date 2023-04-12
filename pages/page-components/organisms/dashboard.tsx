@@ -1,7 +1,9 @@
-import Cube from './cube';
+import Cube from '../canvas/cube';
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useState } from 'react';
-import { connectToSerialPort, updateBaudRate, readData } from '../utils/serial-port-handlers';
+import { connectToSerialPort, updateBaudRate, readData } from '../../utils/serial-port-handlers';
+import BaudRate from '../molecules/baudrate';
+import Devices from '../molecules/devices';
 
 const BaudRates = [9600, 19200, 38400, 57600, 115200];
 
@@ -55,8 +57,15 @@ function Dashboard() {
    * Handles the connection to the device
    */
   const connect = async () => {
-    await connectToSerialPort(selectedDevice, baudRate, setIsConnected, setIntervalId, setAngle);
-  };
+    const connected = await connectToSerialPort(
+      selectedDevice,
+      baudRate,
+      setIsConnected,
+      setIntervalId,
+      setAngle
+    );
+    setIsConnected(connected);
+  };  
 
   /**
    * Handles the disconnection of the device
@@ -79,52 +88,56 @@ function Dashboard() {
     }
 
     const interval = (baudRate / 115200) * 1000;
-    const newIntervalId = setInterval(readData(selectedDevice, setAngle), interval) as unknown as NodeJS.Timeout;
+    const newIntervalId = setInterval(
+      readData(selectedDevice, setAngle),
+      interval
+    ) as unknown as NodeJS.Timeout;
     setIntervalId(newIntervalId);
   };
 
   return (
-    <div style={{ width: '100%', height: '100vh' }}>
-      <div>Current Cube Angle: {angle.toFixed(1)}°</div>
+    <div className="container d-flex flex-column">
+      <div className="mt-5">
+        <div className="col-12 text-center py-4">
+          <h2 className="major-mono-display">N-Cubotics</h2>
+          <span className="sub-title">Connect the future</span>
+        </div>
 
-      <div className='baudrates'>
-        <select value={baudRate} onChange={handleBaudRateChange}>
-          {BaudRates.map((rate) => (
-            <option key={rate} value={rate}>
-              {rate}
-            </option>
-          ))}
-        </select>
+        <div className="row flex-grow-1">
+          <div className="col-12">
+            <Suspense fallback={null}>
+              <Canvas shadows>
+                <ambientLight intensity={0.5} />
+                <pointLight position={[2, 5, 2]} intensity={1} />
+                <Cube angle={angle} />
+              </Canvas>
+            </Suspense>
+          </div>
+        </div>
       </div>
 
-      <div className='devices'>
-        <select value={selectedDevice || ''} onChange={handleDeviceChange} disabled={isConnected}>
-          <option value='' disabled>
-            Select a device
-          </option>
-          {devices.map((device) => (
-            <option key={device.path} value={device.path}>
-              {device.path}
-            </option>
-          ))}
-        </select>
-        {!isConnected && (
-          <button onClick={connect}>Connect</button>
-        )}
-        {isConnected && (
-          <button onClick={disconnect}>Disconnect</button>
-        )}
+      <div className="row">
+        <div className="col-12 text-center">
+          <p>Current Cube Angle: {angle.toFixed(1)}°</p>
+        </div>
       </div>
 
-      <Suspense fallback={null}>
-        <Canvas shadows>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[2, 5, 2]} intensity={1} />
-          <Cube angle={angle} />
-        </Canvas>
-      </Suspense>
+      <BaudRate
+        baudRate={baudRate}
+        isConnected={isConnected}
+        handleBaudRateChange={handleBaudRateChange}
+      />
+
+      <Devices
+        devices={devices}
+        isConnected={isConnected}
+        selectedDevice={selectedDevice}
+        handleDeviceChange={handleDeviceChange}
+        connect={connect}
+        disconnect={disconnect}
+      />
     </div>
-  );
+  );  
 
 }
 

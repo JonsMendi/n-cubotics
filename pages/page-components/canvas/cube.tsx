@@ -63,7 +63,7 @@ const Cube = ({ angle, ...rest }: CubeProps) => {
 
   return (
     <>
-      <PerspectiveCamera makeDefault fov={50} />
+      <PerspectiveCamera makeDefault fov={20} />
       <mesh rotation={[0, 0, Math.PI / 4]} ref={cubeAnimationRef}>
         <boxGeometry args={[2, 2, 2]} />
         <meshBasicMaterial map={texture} />
