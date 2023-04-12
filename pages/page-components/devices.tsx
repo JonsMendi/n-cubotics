@@ -1,32 +1,54 @@
-import mockDevices from "../utils/mockDevices";
+import { useState, useEffect } from "react";
 
-type DeviceProps = {
-  selectedDevice: string;
-  handleDeviceChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  intervalId: NodeJS.Timer | null;
-  handleConnect: () => void;
+type DeviceInfo = {
+  path: string;
+  vendorId: string;
+  productId: string;
 };
 
-const Devices = ({ selectedDevice, handleDeviceChange, intervalId, handleConnect }: DeviceProps) => {
+type DevicesProps = {
+  onSelect: (devicePath: string) => void;
+  isConnected: boolean;
+  selectedDevice: string | null;
+};
+
+export default function Devices({
+  onSelect,
+  isConnected,
+  selectedDevice,
+}: DevicesProps) {
+  const [devices, setDevices] = useState<DeviceInfo[]>([]);
+
+  useEffect(() => {
+    const fetchDevices = async () => {
+      const response = await fetch("/api/list");
+      const data = await response.json();
+      setDevices(data);
+    };
+
+    fetchDevices();
+  }, []);
+
+  const handleDeviceChange = (event: { target: { value: string } }) => {
+    onSelect(event.target.value);
+  };
+
   return (
-    <div className='device'>
-      <label htmlFor="device">Select the Device:</label>
+    <div className="devices">
       <select
-        id="device"
-        name="device"
-        value={selectedDevice}
+        value={selectedDevice || ""}
         onChange={handleDeviceChange}
-        disabled={intervalId !== null}
+        disabled={isConnected}
       >
-        {Object.keys(mockDevices).map(device => (
-          <option key={device} value={device}>
-            {device}
+        <option value="" disabled>
+          Select a device
+        </option>
+        {devices.map((device) => (
+          <option key={device.path} value={device.path}>
+            {device.path}
           </option>
         ))}
       </select>
-      <button onClick={handleConnect}>{intervalId !== null ? 'Disconnect' : 'Connect'}</button>
     </div>
   );
-};
-
-export default Devices;
+}

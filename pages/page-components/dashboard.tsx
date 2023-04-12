@@ -1,6 +1,7 @@
 import Cube from './cube';
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useState } from 'react';
+import { connectToSerialPort, updateBaudRate, readData } from '../utils/serial-port-handlers';
 
 const BaudRates = [9600, 19200, 38400, 57600, 115200];
 
@@ -19,6 +20,7 @@ function Dashboard() {
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    // fetch the available devices
     const fetchDevices = async () => {
       const response = await fetch("/api/list");
       const data = await response.json();
@@ -29,107 +31,32 @@ function Dashboard() {
   }, []);
 
   /**
-   * Read data from the connected device and update the angle
+   * Handles the baud rate changing value
+   * @param event - the baud rate value
    */
-  const readData = async () => {
-    const readResponse = await fetch("/api/read", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        devicePath: selectedDevice,
-      }),
-    });
+  const handleBaudRateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setBaudRate(parseInt(event.target.value, 10));
 
-    const readData = await readResponse.json();
-    setAngle(readData.angle);
-  };
-
-  /**
-   * Updates the Intervale
-   */
-  const updateInterval = () => {
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
-
-    const interval = (baudRate / 115200) * 1000;
-    const newIntervalId = setInterval(readData, interval);
-    setIntervalId(newIntervalId);
-  };
-
-  /**
-   * Update the Baud Rate value
-   */
-  const updateBaudRate = async () => {
-    if (selectedDevice) {
-      const response = await fetch("/api/update-baudrate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          devicePath: selectedDevice,
-          baudRate,
-        }),
-      });
-  
-      const data = await response.json();
-      console.log("updateBaudRate:", data.message);
+    if (isConnected) {
+      updateBaudRate(selectedDevice, baudRate);
+      updateInterval();
     }
   };
-  
 
   /**
    * Handles the baud rate changing value
    * @param event - the baud rate value
    */
-  const handleBaudRateChange = (event: { target: { value: string; }; }) => {
-    setBaudRate(parseInt(event.target.value, 10));
-  
-    if (isConnected) {
-      updateBaudRate(); // Update the baud rate for the connected device
-      updateInterval(); // Update the reading interval
-    }
-  }; 
-
-  /**
-   * Handles the device changing value
-   * @param event - the device value
-   */
-  const handleDeviceChange = (event: { target: { value: string; }; }) => {
+  const handleDeviceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDevice(event.target.value);
   };
 
   /**
-   * Handles the connection to a specific device in the serial port
+   * Handles the connection to the device
    */
-  const connectToSerialPort = async () => {
-    if (selectedDevice) {
-      const response = await fetch("/api/connect", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          devicePath: selectedDevice,
-          baudRate,
-        }),
-      });
-  
-      const data = await response.json();
-      console.log(data.message);
-  
-      // Calculate interval based on the selected baud rate
-      const interval = (baudRate / 115200) * 1000;
-  
-      // Periodically read data from the device at different intervals based on the baud rate
-      const newIntervalId = setInterval(readData, interval);
-      setIntervalId(newIntervalId);
-      setIsConnected(true);
-    }
-  };  
+  const connect = async () => {
+    await connectToSerialPort(selectedDevice, baudRate, setIsConnected, setIntervalId, setAngle);
+  };
 
   /**
    * Handles the disconnection of the device
@@ -142,12 +69,25 @@ function Dashboard() {
     setIsConnected(false);
     setAngle(0);
   };
-  
+
+  /**
+   * Updates the Intervale
+   */
+  const updateInterval = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+
+    const interval = (baudRate / 115200) * 1000;
+    const newIntervalId = setInterval(readData(selectedDevice, setAngle), interval) as unknown as NodeJS.Timeout;
+    setIntervalId(newIntervalId);
+  };
+
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <div>Current Cube Angle: {angle.toFixed(1)}°</div>
 
-      <div>
+      <div className='baudrates'>
         <select value={baudRate} onChange={handleBaudRateChange}>
           {BaudRates.map((rate) => (
             <option key={rate} value={rate}>
@@ -157,9 +97,9 @@ function Dashboard() {
         </select>
       </div>
 
-      <div>
-        <select value={selectedDevice || ""} onChange={handleDeviceChange} disabled={isConnected}>
-          <option value="" disabled>
+      <div className='devices'>
+        <select value={selectedDevice || ''} onChange={handleDeviceChange} disabled={isConnected}>
+          <option value='' disabled>
             Select a device
           </option>
           {devices.map((device) => (
@@ -169,7 +109,7 @@ function Dashboard() {
           ))}
         </select>
         {!isConnected && (
-          <button onClick={connectToSerialPort}>Connect</button>
+          <button onClick={connect}>Connect</button>
         )}
         {isConnected && (
           <button onClick={disconnect}>Disconnect</button>

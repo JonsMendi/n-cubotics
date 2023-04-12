@@ -1,29 +1,39 @@
+import { useState } from "react";
+
+const BaudRates = [9600, 19200, 38400, 57600, 115200];
+
 type BaudRateProps = {
-  selectedDevice: string;
-  baudRates: Record<string, number>;
-  handleBaudRateChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onUpdate: (baudRate: number) => void;
+  disabled: boolean;
+  currentBaudRate: number;
 };
 
-const BaudRate = ({ selectedDevice, baudRates, handleBaudRateChange }: BaudRateProps) => {
-  const baudRateSelect = [9600, 19200, 38400, 57600, 115200];
+export default function BaudRate({
+  onUpdate,
+  disabled,
+  currentBaudRate,
+}: BaudRateProps) {
+  const [baudRate, setBaudRate] = useState(currentBaudRate);
+
+  const handleBaudRateChange = (event: { target: { value: string } }) => {
+    const newBaudRate = parseInt(event.target.value, 10);
+    setBaudRate(newBaudRate);
+    onUpdate(newBaudRate);
+  };
 
   return (
-    <div className='baudrate'>
-      <label htmlFor="baudRate">Select the Baud Rate:</label>
+    <div className="baudrates">
       <select
-        id="baudRate"
-        name="baudRate"
-        value={baudRates[selectedDevice]}
+        value={baudRate}
         onChange={handleBaudRateChange}
+        disabled={disabled}
       >
-        {baudRateSelect.map(baudRate => (
-          <option key={baudRate} value={baudRate}>
-            {baudRate}
+        {BaudRates.map((rate) => (
+          <option key={rate} value={rate}>
+            {rate}
           </option>
         ))}
       </select>
     </div>
   );
-};
-
-export default BaudRate;
+}

@@ -6,10 +6,10 @@ class MockSerialPort {
   static selectedDevice: string | null = null;
   static selectedBaudRate: number | null = null;
 
-  constructor(options: { path: string; baudRate: number }) {
-    MockSerialPort.selectedDevice = options.path;
-    MockSerialPort.selectedBaudRate = options.baudRate;
-    console.log("MockSerialPort connected:", options.path, options.baudRate);
+  constructor(options: SerialPort.OpenOptions) {
+    /* MockSerialPort.selectedDevice = options.path; */
+    MockSerialPort.selectedBaudRate = options.baudRate || null;
+    console.log("MockSerialPort connected:", options.baudRate);
   }
 
   static list(): Promise<any> {
