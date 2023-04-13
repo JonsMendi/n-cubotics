@@ -24,7 +24,6 @@ function Dashboard() {
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const [readMode, setReadMode] = useState<'random' | 'increment'>('increment');
 
-
   useEffect(() => {
     // fetch the available devices
     const fetchDevices = async () => {
@@ -109,11 +108,11 @@ function Dashboard() {
       <div className="mt-5">
         <div className="col-12 text-center py-4">
           <h2 className="major-mono-display">N-Cubotics</h2>
-          <span className="sub-title">Connect the future</span>
+          <span className="sub-title">Bringing your cube to life, one degree at a time</span>
         </div>
-
+  
         <div className="row flex-grow-1">
-          <div className="col-12">
+          <div className="col-12 canvas">
             <Suspense fallback={null}>
               <Canvas shadows>
                 <ambientLight intensity={0.5} />
@@ -124,43 +123,66 @@ function Dashboard() {
           </div>
         </div>
       </div>
-
-      <div className="row">
-        <div className="col-12 text-center">
-          <p>Current Cube Angle: {angle.toFixed(1)}°</p>
+  
+      <div className="fixed-bottom row rounded pt-3 pb-3 serial-port">
+        <div className="row">
+          <div className="col-12">
+            <h5 className="text-center">Serial Port</h5>
+          </div>
         </div>
+
+        <div className="col-md-3">
+          <Devices
+            devices={devices}
+            isConnected={isConnected}
+            selectedDevice={selectedDevice}
+            handleDeviceChange={handleDeviceChange}
+          />
+        </div>
+        <div className="col-md-3">
+          <BaudRate
+            baudRate={baudRate}
+            isConnected={isConnected}
+            handleBaudRateChange={handleBaudRateChange}
+            isDeviceSelected={selectedDevice !== null}
+          />
+        </div>
+        <div className="col-md-3">
+          <ReadMode
+            readMode={readMode}
+            isConnected={isConnected}
+            handleReadModeChange={handleReadModeChange}
+            isDeviceSelected={selectedDevice !== null}
+          />
+        </div>
+       
+        <div className="col-md-3">
+          <div className="col-md-10 mx-auto">
+            <label htmlFor="current-angle-input">Current Cube Angle:</label>
+            <input
+              type="text"
+              className="form-control serial-port-select"
+              id="current-angle-input"
+              value={`${angle.toFixed(1)}°`}
+              readOnly
+            />
+          </div>
+          
+        </div>
+
+
+        <Connect
+          isConnected={isConnected}
+          connect={connect}
+          disconnect={disconnect}
+          isDeviceSelected={selectedDevice !== null}
+        />
       </div>
 
-      <Devices
-        devices={devices}
-        isConnected={isConnected}
-        selectedDevice={selectedDevice}
-        handleDeviceChange={handleDeviceChange}
-      />
-
-      <BaudRate
-        baudRate={baudRate}
-        isConnected={isConnected}
-        handleBaudRateChange={handleBaudRateChange}
-        isDeviceSelected={selectedDevice !== null}
-      />
-
-      <ReadMode
-        readMode={readMode}
-        isConnected={isConnected}
-        handleReadModeChange={handleReadModeChange}
-        isDeviceSelected={selectedDevice !== null}
-      />
-
-      <Connect
-        isConnected={isConnected}
-        connect={connect}
-        disconnect={disconnect}
-        isDeviceSelected={selectedDevice !== null}
-      />
-
+  
     </div>
-  );  
+  );
+    
 
 }
 

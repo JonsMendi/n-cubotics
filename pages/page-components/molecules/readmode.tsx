@@ -10,11 +10,11 @@ type ReadModeProps = {
 const ReadMode: React.FC<ReadModeProps> = ({ readMode, isConnected, handleReadModeChange, isDeviceSelected }) => {
   return (
     <div className="row">
-      <div className="col-md-6 mx-auto">
+      <div className="col-md-10 mx-auto">
         <label htmlFor="readModeSelect">Read Mode:</label>
         <select
           id="readModeSelect"
-          className="form-select mb-3"
+          className="form-select mb-3 serial-port-select"
           value={readMode}
           onChange={handleReadModeChange}
           disabled={!isDeviceSelected || isConnected}

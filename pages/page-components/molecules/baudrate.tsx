@@ -17,10 +17,10 @@ const BaudRate: React.FC<BaudRateProps> = ({
 }) => {
   return (
     <div className="row mb-3">
-      <div className="col-md-6 mx-auto">
+      <div className="col-md-10 mx-auto">
         <label htmlFor="">Baud rate:</label>
         <select
-          className="form-select"
+          className="form-select serial-port-select"
           value={baudRate}
           onChange={handleBaudRateChange}
           disabled={!isDeviceSelected || isConnected}

@@ -31,3 +31,52 @@ span.sub-title {
   cursor: default;
 }
 
+.serial-port-select {
+  background-color: black;
+  color: rgb(230, 230, 230);
+}
+
+.canvas {
+  height: 400px;
+}
+
+
+.button-connection {
+  padding: 10px 20px;
+  text-transform: uppercase;
+  border-radius: 8px;
+  font-size: 17px;
+  font-weight: 500;
+  color: #50529D;
+  text-shadow: none;
+  background: transparent;
+  box-shadow: transparent;
+  border: 5px solid #50529D;
+  transition: 0.5s ease;
+  user-select: none;
+}
+
+.button-connection:hover {
+  color: #ffffff;
+  background: #50529D;
+  border: 5px solid #50529D;
+  text-shadow: 0 0 5px #ffffff,
+    0 0 10px #ffffff,
+    0 0 20px #ffffff;
+  box-shadow: 0 0 5px #50529D,
+    0 0 20px #50529D,
+    0 0 50px #50529D,
+    0 0 100px #50529D;
+}
+
+@media (max-width: 768px) {
+  .canvas {
+    height: 300px;
+  }
+}
+
+@media (max-width: 375px) {
+  .canvas {
+    height: 200px;
+  }
+}

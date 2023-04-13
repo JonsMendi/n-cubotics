@@ -21,9 +21,9 @@ const Devices: React.FC<DevicesProps> = ({
 }) => {
   return (
     <div className="row">
-      <div className="col-md-6 mx-auto">
-        <label htmlFor="">Serial Port:</label>
-        <select className="form-select mb-3" value={selectedDevice || ''} onChange={handleDeviceChange} disabled={isConnected}>
+      <div className="col-md-10 mx-auto">
+        <label htmlFor="">Device:</label>
+        <select className="form-select mb-3 serial-port-select" value={selectedDevice || ''} onChange={handleDeviceChange} disabled={isConnected}>
           <option value="" disabled>
             Select a device
           </option>
