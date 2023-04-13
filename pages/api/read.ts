@@ -14,12 +14,12 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { devicePath } = req.body;
+    const { devicePath, readMode } = req.body;
 
     try {
       const port = new SerialPort(devicePath);
       const buffer = Buffer.alloc(4);
-      const result = await (port.binding as typeof MockBinding.Binding.prototype).read(buffer, 0, 4);
+      const result = await ((port.binding as unknown) as typeof MockBinding.Binding.prototype).read(buffer, 0, 4, readMode);
       const angle = buffer.readInt32LE(0);
 
       res.status(200).json({ angle });
@@ -30,4 +30,3 @@ export default async function handler(
     res.status(405).json({ error: "Method not allowed" });
   }
 }
-

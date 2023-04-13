@@ -5,6 +5,8 @@ class MockSerialPort {
   static devices = ["Arduino", "Raspberry Pi", "ESP32"];
   static selectedDevice: string | null = null;
   static selectedBaudRate: number | null = null;
+  static currentValue = 0;
+  static readMode: 'random' | 'increment' = 'random';
 
   constructor(options: SerialPort.OpenOptions) {
     /* MockSerialPort.selectedDevice = options.path; */
@@ -30,9 +32,17 @@ class MockSerialPort {
     return Promise.resolve();
   }
 
-  async read(buffer: Buffer, offset: number, length: number): Promise<any> {
-    const randomInt = Math.floor(Math.random() * 361); // Random integer between 0-360
-    buffer.writeInt32LE(randomInt, offset);
+  async read(buffer: Buffer, offset: number, length: number, mode: 'random' | 'increment'): Promise<any> {
+    let value: number;
+
+    if (mode === 'random') {
+      value = Math.floor(Math.random() * 361);
+    } else {
+      value = MockSerialPort.currentValue;
+      MockSerialPort.currentValue = (MockSerialPort.currentValue + 1) % 361;
+    }
+
+    buffer.writeInt32LE(value, offset);
     return Promise.resolve({ bytesRead: length });
   }
 
@@ -70,7 +80,11 @@ const MockBinding: MockBinding = {
   ...MockSerialPort,
   open: MockSerialPort.prototype.open,
   close: MockSerialPort.prototype.close,
-  read: MockSerialPort.prototype.read,
+  read: function (buffer: Buffer, offset: number, length: number): Promise<any> {
+    // Default mode to 'random' if not provided
+    const mode = this.Binding.readMode || 'random';
+    return MockSerialPort.prototype.read.call(this, buffer, offset, length, mode);
+  },
   write: MockSerialPort.prototype.write,
   update: async function (options: { baudRate: number }): Promise<void> {
     if (!this.Binding.selectedDevice) {
@@ -86,5 +100,6 @@ const MockBinding: MockBinding = {
   drain: MockSerialPort.prototype.drain,
   flush: MockSerialPort.prototype.flush,
 };
+
 
 export default MockBinding;

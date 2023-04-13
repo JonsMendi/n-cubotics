@@ -6,12 +6,14 @@ type BaudRateProps = {
   baudRate: number;
   isConnected: boolean;
   handleBaudRateChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  isDeviceSelected: boolean;
 };
 
 const BaudRate: React.FC<BaudRateProps> = ({
   baudRate,
   isConnected,
   handleBaudRateChange,
+  isDeviceSelected
 }) => {
   return (
     <div className="row mb-3">
@@ -21,7 +23,7 @@ const BaudRate: React.FC<BaudRateProps> = ({
           className="form-select"
           value={baudRate}
           onChange={handleBaudRateChange}
-          disabled={isConnected}
+          disabled={!isDeviceSelected || isConnected}
         >
           {BaudRates.map((rate) => (
             <option key={rate} value={rate}>

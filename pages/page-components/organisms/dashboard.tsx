@@ -4,6 +4,8 @@ import { Suspense, useEffect, useState } from 'react';
 import { connectToSerialPort, updateBaudRate, readData } from '../../utils/serial-port-handlers';
 import BaudRate from '../molecules/baudrate';
 import Devices from '../molecules/devices';
+import Connect from '../molecules/connect';
+import ReadMode from '../molecules/readmode';
 
 const BaudRates = [9600, 19200, 38400, 57600, 115200];
 
@@ -20,6 +22,8 @@ function Dashboard() {
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const [readMode, setReadMode] = useState<'random' | 'increment'>('increment');
+
 
   useEffect(() => {
     // fetch the available devices
@@ -53,6 +57,11 @@ function Dashboard() {
     setSelectedDevice(event.target.value);
   };
 
+
+  const handleReadModeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setReadMode(event.target.value as 'random' | 'increment');
+  };
+
   /**
    * Handles the connection to the device
    */
@@ -60,6 +69,7 @@ function Dashboard() {
     const connected = await connectToSerialPort(
       selectedDevice,
       baudRate,
+      readMode,
       setIsConnected,
       setIntervalId,
       setAngle
@@ -76,7 +86,6 @@ function Dashboard() {
       setIntervalId(null);
     }
     setIsConnected(false);
-    setAngle(0);
   };
 
   /**
@@ -89,7 +98,7 @@ function Dashboard() {
 
     const interval = (baudRate / 115200) * 1000;
     const newIntervalId = setInterval(
-      readData(selectedDevice, setAngle),
+      readData(selectedDevice,readMode, setAngle),
       interval
     ) as unknown as NodeJS.Timeout;
     setIntervalId(newIntervalId);
@@ -109,7 +118,7 @@ function Dashboard() {
               <Canvas shadows>
                 <ambientLight intensity={0.5} />
                 <pointLight position={[2, 5, 2]} intensity={1} />
-                <Cube angle={angle} />
+                <Cube angle={angle} baudRate={baudRate} readMode={readMode} />
               </Canvas>
             </Suspense>
           </div>
@@ -122,20 +131,34 @@ function Dashboard() {
         </div>
       </div>
 
-      <BaudRate
-        baudRate={baudRate}
-        isConnected={isConnected}
-        handleBaudRateChange={handleBaudRateChange}
-      />
-
       <Devices
         devices={devices}
         isConnected={isConnected}
         selectedDevice={selectedDevice}
         handleDeviceChange={handleDeviceChange}
+      />
+
+      <BaudRate
+        baudRate={baudRate}
+        isConnected={isConnected}
+        handleBaudRateChange={handleBaudRateChange}
+        isDeviceSelected={selectedDevice !== null}
+      />
+
+      <ReadMode
+        readMode={readMode}
+        isConnected={isConnected}
+        handleReadModeChange={handleReadModeChange}
+        isDeviceSelected={selectedDevice !== null}
+      />
+
+      <Connect
+        isConnected={isConnected}
         connect={connect}
         disconnect={disconnect}
+        isDeviceSelected={selectedDevice !== null}
       />
+
     </div>
   );  
 

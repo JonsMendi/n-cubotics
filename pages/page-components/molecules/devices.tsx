@@ -11,8 +11,6 @@ type DevicesProps = {
   isConnected: boolean;
   selectedDevice: string | null;
   handleDeviceChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  connect: () => void;
-  disconnect: () => void;
 };
 
 const Devices: React.FC<DevicesProps> = ({
@@ -20,8 +18,6 @@ const Devices: React.FC<DevicesProps> = ({
   isConnected,
   selectedDevice,
   handleDeviceChange,
-  connect,
-  disconnect,
 }) => {
   return (
     <div className="row">
@@ -37,16 +33,6 @@ const Devices: React.FC<DevicesProps> = ({
             </option>
           ))}
         </select>
-        {!isConnected && (
-          <button className="btn btn-primary w-100" type="button" onClick={connect}>
-            Connect
-          </button>
-        )}
-        {isConnected && (
-          <button className="btn btn-primary w-100" type="button" onClick={disconnect}>
-            Disconnect
-          </button>
-        )}
       </div>
     </div>
   );
