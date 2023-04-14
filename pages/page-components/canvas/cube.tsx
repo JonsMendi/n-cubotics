@@ -4,6 +4,7 @@ import * as TWEEN from '@tweenjs/tween.js';
 import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
+
 type CubeProps = {
   angle: number;
   antialias?: boolean;
@@ -26,7 +27,7 @@ const Cube = ({ angle, baudRate, readMode, ...rest }: CubeProps) => {
   const currentRotationRef = useRef(0);
   const tweenRef = useRef<TWEEN.Tween<Rotation> | null>(null);
   // Apply the texture
-  const texture = useMemo(() => new THREE.TextureLoader().load('/metal-gold.jpg'), []);
+  const texture = useMemo(() => new THREE.TextureLoader().load('/rouf.jpg'), []);
   // Make use of the baudrate value to make the animation precise
   const baseDuration = readMode === 'random' ? 1000 : 100;
   const transitionDuration = baseDuration / (baudRate / 9600);
@@ -72,7 +73,7 @@ const Cube = ({ angle, baudRate, readMode, ...rest }: CubeProps) => {
       <PerspectiveCamera makeDefault fov={20} />
       <mesh rotation={[0, 0, Math.PI / 4]} ref={cubeAnimationRef}>
         <boxGeometry args={[2, 2, 2]} />
-        <meshBasicMaterial map={texture} />
+        <meshLambertMaterial emissive="#000000" reflectivity={0.886} combine={THREE.MultiplyOperation} vertexColors={false} /* wireframe={true} */ map={texture} />
       </mesh>
     </>
   );

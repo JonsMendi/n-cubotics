@@ -14,7 +14,7 @@ const ReadMode: React.FC<ReadModeProps> = ({ readMode, isConnected, handleReadMo
         <label htmlFor="readModeSelect">Read Mode:</label>
         <select
           id="readModeSelect"
-          className="form-select mb-3 serial-port-select"
+          className="form-select mb-3 custom-select"
           value={readMode}
           onChange={handleReadModeChange}
           disabled={!isDeviceSelected || isConnected}

@@ -4,7 +4,7 @@ import Image from 'next/image';
 function TopBar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-black">
-      <div className="container">
+      <div className="container-fluid">
         <a
           className="navbar-brand d-flex align-items-center"
           target="_blank"

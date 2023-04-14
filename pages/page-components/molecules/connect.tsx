@@ -9,8 +9,8 @@ type ConnectProps = {
 
 const Connect: React.FC<ConnectProps> = ({ isConnected, connect, disconnect, isDeviceSelected }) => {
   return (
-    <div className="row mt-4 mb-4">
-      <div className="col-md-3 mx-auto">
+    <div className="row mt-5 mb-4">
+      <div className="col-md-10 mx-auto">
         {!isConnected && (
           <button
             className="button-connection w-100"

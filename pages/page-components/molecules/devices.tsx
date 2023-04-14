@@ -23,7 +23,7 @@ const Devices: React.FC<DevicesProps> = ({
     <div className="row">
       <div className="col-md-10 mx-auto">
         <label htmlFor="">Device:</label>
-        <select className="form-select mb-3 serial-port-select" value={selectedDevice || ''} onChange={handleDeviceChange} disabled={isConnected}>
+        <select className="form-select mb-3 custom-select" value={selectedDevice || ''} onChange={handleDeviceChange} disabled={isConnected}>
           <option value="" disabled>
             Select a device
           </option>

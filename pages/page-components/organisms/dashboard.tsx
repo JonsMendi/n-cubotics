@@ -104,86 +104,81 @@ function Dashboard() {
   };
 
   return (
-    <div className="container d-flex flex-column">
-      <div className="mt-5">
-        <div className="col-12 text-center py-4">
-          <h2 className="major-mono-display">N-Cubotics</h2>
-          <span className="sub-title">Bringing your cube to life, one degree at a time</span>
-        </div>
-  
-        <div className="row flex-grow-1">
-          <div className="col-12 canvas">
-            <Suspense fallback={null}>
-              <Canvas shadows>
-                <ambientLight intensity={0.5} />
-                <pointLight position={[2, 5, 2]} intensity={1} />
-                <Cube angle={angle} baudRate={baudRate} readMode={readMode} />
-              </Canvas>
-            </Suspense>
-          </div>
-        </div>
-      </div>
-  
-      <div className="fixed-bottom row rounded pt-3 pb-3 serial-port">
-        <div className="row">
-          <div className="col-12">
-            <h5 className="text-center">Serial Port</h5>
-          </div>
-        </div>
+    <div className="container-fluid d-flex flex-column flex-grow-1">
 
-        <div className="col-md-3">
-          <Devices
-            devices={devices}
-            isConnected={isConnected}
-            selectedDevice={selectedDevice}
-            handleDeviceChange={handleDeviceChange}
-          />
-        </div>
-        <div className="col-md-3">
-          <BaudRate
-            baudRate={baudRate}
-            isConnected={isConnected}
-            handleBaudRateChange={handleBaudRateChange}
-            isDeviceSelected={selectedDevice !== null}
-          />
-        </div>
-        <div className="col-md-3">
-          <ReadMode
-            readMode={readMode}
-            isConnected={isConnected}
-            handleReadModeChange={handleReadModeChange}
-            isDeviceSelected={selectedDevice !== null}
-          />
-        </div>
-       
-        <div className="col-md-3">
-          <div className="col-md-10 mx-auto">
-            <label htmlFor="current-angle-input">Current Cube Angle:</label>
-            <input
-              type="text"
-              className="form-control serial-port-select"
-              id="current-angle-input"
-              value={`${angle.toFixed(1)}°`}
-              readOnly
+      <div className="row flex-grow-1 align-items-center custom-row">
+        <div className="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-3 d-flex flex-column serial-port-section ">
+          <div className="my-auto">
+            <h5 className="text-center">Serial Port</h5>
+  
+            <Devices
+              devices={devices}
+              isConnected={isConnected}
+              selectedDevice={selectedDevice}
+              handleDeviceChange={handleDeviceChange}
+            />
+  
+            <BaudRate
+              baudRate={baudRate}
+              isConnected={isConnected}
+              handleBaudRateChange={handleBaudRateChange}
+              isDeviceSelected={selectedDevice !== null}
+            />
+  
+            <ReadMode
+              readMode={readMode}
+              isConnected={isConnected}
+              handleReadModeChange={handleReadModeChange}
+              isDeviceSelected={selectedDevice !== null}
+            />
+  
+            <div className="col-md-10 mx-auto">
+              <label htmlFor="current-angle-input">Current Cube Angle:</label>
+              <input
+                type="text"
+                className="form-control custom-select"
+                id="current-angle-input"
+                value={`${angle.toFixed(1)}°`}
+                readOnly
+              />
+            </div>
+  
+            <Connect
+              isConnected={isConnected}
+              connect={connect}
+              disconnect={disconnect}
+              isDeviceSelected={selectedDevice !== null}
             />
           </div>
-          
         </div>
-
-
-        <Connect
-          isConnected={isConnected}
-          connect={connect}
-          disconnect={disconnect}
-          isDeviceSelected={selectedDevice !== null}
-        />
-      </div>
-
   
+        <div className="col-10 col-sm-10 col-md-10 col-lg-8 col-xl-8 cube-section">
+
+            <div className="col-12 text-center mb-5">
+              <h2 className="major-mono-display">N-Cubotics</h2>
+              <span className="sub-title">
+                Bringing your cube to life, one degree at a time
+              </span>
+            </div>
+  
+            <div className="row flex-grow-1">
+              <div className="col-12 canvas">
+                <Suspense fallback={null}>
+                  <Canvas shadows>
+                    <spotLight position={[0.2, 10, 1]} intensity={2} />
+                    <Cube
+                      angle={angle}
+                      baudRate={baudRate}
+                      readMode={readMode}
+                    />
+                  </Canvas>
+                </Suspense>
+              </div>
+            </div>
+        </div>
+      </div>
     </div>
   );
-    
-
 }
 
 export default Dashboard;
