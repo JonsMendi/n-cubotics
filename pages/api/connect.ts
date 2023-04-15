@@ -17,14 +17,17 @@ export default async function handler(
     const { devicePath, baudRate } = req.body;
 
     try {
-      const port = new SerialPort(devicePath, { baudRate });
+      const port = new SerialPort(devicePath, { baudRate, autoOpen: false });
       await port.open();
 
       res.status(200).json({ message: "Connected to the device successfully" });
+      return;
     } catch (error) {
       res.status(500).json({ message: "Error connecting to the device" });
+      return;
     }
   } else {
     res.status(405).json({ message: "Method not allowed" });
+    return;
   }
 }
