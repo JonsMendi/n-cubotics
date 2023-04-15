@@ -1,8 +1,10 @@
+import { OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { connectToSerialPort, readData, updateBaudRate } from '../../../utils/serial-port-handlers';
 import Axis from '../canvas/axis';
+import CameraControls from '../canvas/camera';
 import Cube from '../canvas/cube';
 import BaudRate from '../molecules/baudrate';
 import Connect from '../molecules/connect';
@@ -30,6 +32,7 @@ function Dashboard({axisVisible, setAxisVisible}: any) {
   const [isConnected, setIsConnected] = useState(false);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const [readMode, setReadMode] = useState<'random' | 'increment'>('increment');
+  const cubeAnimationRef = useRef<THREE.Mesh>(null);
   const [orbitCamera, setOrbitCamera] = useState<'left' | 'right' | null>(null);
 
   // Fetch available devices on mount
@@ -169,7 +172,9 @@ function Dashboard({axisVisible, setAxisVisible}: any) {
 
         <div className="col-10 col-sm-10 col-md-10 col-lg-8 col-xl-8 cube-section">
           <div className="col-12 text-center mb-5">
-            <h2 className="major-mono-display">N-<span className='major-mono-display-span'>cuboTICS</span></h2>
+            <h2 className="major-mono-display">
+              N-<span className="major-mono-display-span">cuboTICS</span>
+            </h2>
             <span className="sub-title">
               Bringing your cube to life, one degree at a time:{" "}
               <span className="angle">{`${angle.toFixed(1)}°`}</span>
@@ -181,13 +186,22 @@ function Dashboard({axisVisible, setAxisVisible}: any) {
               <Canvas shadows>
                 <spotLight position={[-8, 0, 0]} intensity={1.5} />
                 <spotLight position={[8, 0, 0]} intensity={0.2} />
+                <OrbitControls
+                  enableZoom={false}
+                  enablePan={false}
+                  enableRotate={false}
+                />
                 <Cube
                   angle={angle}
                   baudRate={baudRate}
                   readMode={readMode}
-                  orbitCamera={orbitCamera}
+                  cubeAnimationRef={cubeAnimationRef}
                 />
                 {axisVisible && <Axis />}
+                <CameraControls
+                  orbitCamera={orbitCamera}
+                  cubeAnimationRef={cubeAnimationRef}
+                />
               </Canvas>
             </Suspense>
           </div>

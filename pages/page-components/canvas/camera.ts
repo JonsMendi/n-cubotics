@@ -3,6 +3,7 @@ import * as THREE from "three";
 
 type CameraControlsProps = {
   orbitCamera: 'left' | 'right' | null;
+  cubeAnimationRef: React.RefObject<THREE.Mesh>;
 };
 
 /**
@@ -10,15 +11,13 @@ type CameraControlsProps = {
  * @param param0 - orbitCamera parameter controls the direction of the camera's orbit
  * @returns - null, since it doesn't render anything in the scene
  */
-function CameraControls ({ orbitCamera }: CameraControlsProps) {
-  const { camera, scene } = useThree();
+function CameraControls ({ orbitCamera, cubeAnimationRef }: CameraControlsProps) {
+  const { camera } = useThree();
 
   useFrame(() => {
-    // Get the cubeAnimation object from the scene
-    const cubeAnimation = scene.getObjectByName('cubeAnimation');
-    if (cubeAnimation && camera) {
+    if (cubeAnimationRef.current && camera) {
       // Clone the position of cubeAnimation object
-      const targetPosition = cubeAnimation.position.clone();
+      const targetPosition = cubeAnimationRef.current.position.clone();
       // Define the axis of rotation
       const orbitAxis = new THREE.Vector3(0, 0, 1);
       // Define the speed of rotation
