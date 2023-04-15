@@ -183,7 +183,11 @@ function Dashboard({axisVisible, setAxisVisible}: any) {
 
           <div className="col-12 canvas">
             <Suspense fallback={null}>
-              <Canvas shadows>
+              <Canvas>
+                <CameraControls
+                  orbitCamera={orbitCamera}
+                  cubeAnimationRef={cubeAnimationRef}
+                />
                 <spotLight position={[-8, 0, 0]} intensity={1.5} />
                 <spotLight position={[8, 0, 0]} intensity={0.2} />
                 <OrbitControls
@@ -198,10 +202,6 @@ function Dashboard({axisVisible, setAxisVisible}: any) {
                   cubeAnimationRef={cubeAnimationRef}
                 />
                 {axisVisible && <Axis />}
-                <CameraControls
-                  orbitCamera={orbitCamera}
-                  cubeAnimationRef={cubeAnimationRef}
-                />
               </Canvas>
             </Suspense>
           </div>
