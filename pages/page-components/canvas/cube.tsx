@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import * as TWEEN from '@tweenjs/tween.js';
 import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import  CameraControls from './camera';
+import CameraControls from './camera';
 
 type CubeProps = {
   angle: number;
@@ -30,7 +30,7 @@ function Cube ({ angle, baudRate, readMode, orbitCamera, ...rest }: CubeProps) {
   const tweenRef = useRef<TWEEN.Tween<Rotation> | null>(null);
 
   // Load the texture for the cube
-  const texture = useMemo(() => new THREE.TextureLoader().load('/rouf.jpg'), []);
+  const texture = useMemo(() => new THREE.TextureLoader().load('/marmore.jpg'), []);
 
   // Calculate the duration of the transition based on the baud rate and read mode
   const baseDuration = readMode === 'random' ? 1000 : 100;

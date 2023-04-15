@@ -28,8 +28,8 @@ function Footer({ axisVisible }: any) {
               {axisVisible && (
                 <>
                   &nbsp;|&nbsp;
-                  <span style={{ color: "red" }}>x-axis</span>,{" "}
-                  <span style={{ color: "green" }}>y-axis</span>,{" "}
+                  <span style={{ color: "red" }}>x-axis</span>{" "}
+                  <span style={{ color: "green" }}>y-axis</span>{" "}
                   <span style={{ color: "blue" }}>z-axis</span>
                 </>
               )}

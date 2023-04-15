@@ -25,7 +25,7 @@ function Devices({devices, isConnected, selectedDevice, handleDeviceChange}: Dev
         <label htmlFor="">Device:</label>
         <select
           className="form-select mb-3 custom-select"
-          value={selectedDevice || ""}
+         value={selectedDevice || ""}
           onChange={handleDeviceChange}
           disabled={isConnected}
         >
@@ -37,7 +37,7 @@ function Devices({devices, isConnected, selectedDevice, handleDeviceChange}: Dev
               {device.path}
             </option>
           ))}
-        </select>
+        </select> 
       </div>
     </div>
   );

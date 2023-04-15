@@ -17,6 +17,11 @@ body {
   font-size: 50px;
 }
 
+.major-mono-display-span {
+  font-weight: 800;
+  font-family: 'Major Mono Display', monospace;
+}
+
 span.sub-title {
   color: rgb(110, 110, 110);
 }
@@ -88,6 +93,51 @@ input.custom-select:disabled {
     0 0 50px #50529D,
     0 0 100px #50529D;
 }
+
+.button-connection:disabled {
+  color: gray;
+  border-color: gray;
+}
+
+.button-connection:disabled:hover {
+  color: gray;
+  background: transparent;
+  border-color: gray;
+  text-shadow: none;
+  box-shadow: none;
+}
+
+.button-orbit {
+  padding: 10px 20px;
+  text-transform: uppercase;
+  border-radius: 8px;
+  font-size: 17px;
+  font-weight: 500;
+  color: #50529D;
+  border: 2px solid white;
+  transition: 0.5s ease;
+  background: transparent;
+  margin: 0 5px;
+}
+
+.button-orbit:hover {
+  border: 2px solid #50529D;
+}
+
+.icon-left,
+.icon-right {
+  vertical-align: middle;
+  margin-bottom: 2px;
+}
+
+.icon-left {
+  margin-right: 6px;
+}
+
+.icon-right {
+  margin-left: 6px;
+}
+
 
 .footer-section {
   min-height: 40px;

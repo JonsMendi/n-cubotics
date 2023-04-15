@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useState } from 'react';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { connectToSerialPort, readData, updateBaudRate } from '../../utils/serial-port-handlers';
 import Axis from '../canvas/axis';
 import Cube from '../canvas/cube';
@@ -168,7 +169,7 @@ function Dashboard({axisVisible, setAxisVisible}: any) {
 
         <div className="col-10 col-sm-10 col-md-10 col-lg-8 col-xl-8 cube-section">
           <div className="col-12 text-center mb-5">
-            <h2 className="major-mono-display">N-Cubotics</h2>
+            <h2 className="major-mono-display">N-<span className='major-mono-display-span'>cuboTICS</span></h2>
             <span className="sub-title">
               Bringing your cube to life, one degree at a time:{" "}
               <span className="angle">{`${angle.toFixed(1)}°`}</span>
@@ -180,7 +181,6 @@ function Dashboard({axisVisible, setAxisVisible}: any) {
               <Canvas shadows>
                 <spotLight position={[-8, 0, 0]} intensity={1.5} />
                 <spotLight position={[8, 0, 0]} intensity={0.2} />
-                {/* <ambientLight intensity={2} /> */}
                 <Cube
                   angle={angle}
                   baudRate={baudRate}
@@ -194,19 +194,26 @@ function Dashboard({axisVisible, setAxisVisible}: any) {
           <div className="row flex-grow-1">
             <div className="col-12 d-flex justify-content-center mb-3">
               <button
+                className="button-orbit"
                 onMouseDown={() => handleOrbitMouseDown("left")}
                 onMouseUp={handleOrbitMouseUp}
               >
-                Orbit left
+                <FaArrowLeft className="icon-left" />
+                Orbit
               </button>
-              <button onClick={() => setAxisVisible(!axisVisible)}>
+              <button
+                className="button-orbit"
+                onClick={() => setAxisVisible(!axisVisible)}
+              >
                 Toggle Axis
               </button>
               <button
+                className="button-orbit"
                 onMouseDown={() => handleOrbitMouseDown("right")}
                 onMouseUp={handleOrbitMouseUp}
               >
-                Orbit right
+                Orbit
+                <FaArrowRight className="icon-right" />
               </button>
             </div>
           </div>
