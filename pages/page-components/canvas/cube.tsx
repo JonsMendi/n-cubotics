@@ -29,8 +29,7 @@ function Cube ({ angle, baudRate, readMode, orbitCamera, ...rest }: CubeProps) {
   const currentRotationRef = useRef(0);
   const tweenRef = useRef<TWEEN.Tween<Rotation> | null>(null);
 
-  // Load the texture for the cube
-  const texture = useMemo(() => new THREE.TextureLoader().load('/marmore.jpg'), []);
+  
 
   // Calculate the duration of the transition based on the baud rate and read mode
   const baseDuration = readMode === 'random' ? 1000 : 100;
@@ -79,6 +78,13 @@ function Cube ({ angle, baudRate, readMode, orbitCamera, ...rest }: CubeProps) {
   useFrame(() => {
     TWEEN.update();
   });
+
+  // Load the texture for the cube
+  const texture = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      return new THREE.TextureLoader().load('/marmore.jpg');
+    }
+  }, []);  
   
   return (
     <>
