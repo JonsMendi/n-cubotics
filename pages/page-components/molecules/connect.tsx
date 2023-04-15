@@ -7,7 +7,12 @@ type ConnectProps = {
   isDeviceSelected: boolean;
 };
 
-const Connect: React.FC<ConnectProps> = ({ isConnected, connect, disconnect, isDeviceSelected }) => {
+/**
+ * The Connect Component
+ * @param param0 - isConnected, connect, disconnect, isDeviceSelected properties
+ * @returns - the Connect button
+ */
+function Connect ({ isConnected, connect, disconnect, isDeviceSelected }: ConnectProps) {
   return (
     <div className="row mt-5 mb-4">
       <div className="col-md-10 mx-auto">

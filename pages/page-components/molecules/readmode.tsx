@@ -7,7 +7,12 @@ type ReadModeProps = {
   isDeviceSelected: boolean;
 };
 
-const ReadMode: React.FC<ReadModeProps> = ({ readMode, isConnected, handleReadModeChange, isDeviceSelected }) => {
+/**
+ * The ReadMode Component
+ * @param param0 readMode, isConnected, handleReadModeChange, isDeviceSelected properties
+ * @returns - the ReadMode dropdown
+ */
+function ReadMode ({ readMode, isConnected, handleReadModeChange, isDeviceSelected }: ReadModeProps) {
   return (
     <div className="row">
       <div className="col-md-10 mx-auto">

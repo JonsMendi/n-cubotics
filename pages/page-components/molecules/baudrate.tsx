@@ -9,12 +9,12 @@ type BaudRateProps = {
   isDeviceSelected: boolean;
 };
 
-const BaudRate: React.FC<BaudRateProps> = ({
-  baudRate,
-  isConnected,
-  handleBaudRateChange,
-  isDeviceSelected
-}) => {
+/**
+ * The BaudRate Component
+ * @param param0 - baudRate, isConnected, handleBaudRateChange, isDeviceSelected properties
+ * @returns - the BaudRate dropdown
+ */
+function BaudRate({baudRate, isConnected, handleBaudRateChange, isDeviceSelected}: BaudRateProps) {
   return (
     <div className="row mb-3">
       <div className="col-md-10 mx-auto">

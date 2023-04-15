@@ -5,7 +5,7 @@ import Footer from "./page-components/organisms/footer";
 import { useState } from "react";
 
 export default function Home() {
-  const [axisVisible, setAxisVisible] = useState(true);
+  const [axisVisible, setAxisVisible] = useState(false);
 
   return (
     <>

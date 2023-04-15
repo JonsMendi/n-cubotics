@@ -1,6 +1,10 @@
-import React from 'react';
-import Image from 'next/image';
+import React from "react";
+import Image from "next/image";
 
+/**
+ * The Topbar Component
+ * @returns - the Topbar Component
+ */
 function TopBar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-black">
@@ -21,6 +25,6 @@ function TopBar() {
       </div>
     </nav>
   );
-};
+}
 
 export default TopBar;

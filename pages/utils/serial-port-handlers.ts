@@ -1,11 +1,12 @@
-type DeviceInfo = {
-  path: string;
-  vendorId: string;
-  productId: string;
-};
-
 /**
- * Handles the connection to a specific device in the serial port
+ * Connects to the specified serial port device
+ * @param selectedDevice - the selected device to connect
+ * @param baudRate - the baud rate for the connection
+ * @param readMode - the mode to read data (random or increment)
+ * @param setIsConnected - function to set isConnected state
+ * @param setIntervalId - function to set intervalId state
+ * @param setAngle - function to set angle state
+ * @returns - true if connected successfully, false otherwise
  */
 export const connectToSerialPort = async (
   selectedDevice: string | null,
@@ -45,10 +46,10 @@ export const connectToSerialPort = async (
   return false;
 }
 
-
-
 /**
- * Update the Baud Rate value
+ * Updates the baud rate for the specified serial port device
+ * @param selectedDevice - the selected device to update the baud rate
+ * @param baudRate - the new baud rate to set
  */
 export const updateBaudRate = async (
   selectedDevice: string | null,
@@ -72,8 +73,12 @@ export const updateBaudRate = async (
 };
 
 /**
-  * Read data from the connected device and update the angle
-  */
+ * Reads data from the specified serial port device
+ * @param selectedDevice - the selected device to read data from
+ * @param readMode - the mode to read data (random or increment)
+ * @param setAngle - function to set angle state
+ * @returns - a function to be executed on every read interval
+ */
 export const readData = (
   selectedDevice: string | null,
   readMode: 'random' | 'increment',
