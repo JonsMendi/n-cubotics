@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import SerialPort from "serialport";
-import MockBinding from "../utils/mock-serial-port";
+import MockBinding from "../../utils/mock-serial-port";
 
 (SerialPort.Binding as any) = MockBinding.Binding;
 

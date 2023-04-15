@@ -1,7 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import { connectToSerialPort, readData, updateBaudRate } from '../../utils/serial-port-handlers';
+import { connectToSerialPort, readData, updateBaudRate } from '../../../utils/serial-port-handlers';
 import Axis from '../canvas/axis';
 import Cube from '../canvas/cube';
 import BaudRate from '../molecules/baudrate';
