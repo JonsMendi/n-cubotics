@@ -1,10 +1,11 @@
-import Cube from '../canvas/cube';
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useState } from 'react';
-import { connectToSerialPort, updateBaudRate, readData } from '../../utils/serial-port-handlers';
+import { connectToSerialPort, readData, updateBaudRate } from '../../utils/serial-port-handlers';
+import Axis from '../canvas/axis';
+import Cube from '../canvas/cube';
 import BaudRate from '../molecules/baudrate';
-import Devices from '../molecules/devices';
 import Connect from '../molecules/connect';
+import Devices from '../molecules/devices';
 import ReadMode from '../molecules/readmode';
 
 const BaudRates = [9600, 19200, 38400, 57600, 115200];
@@ -15,7 +16,12 @@ type DeviceInfo = {
   productId: string;
 };
 
-function Dashboard() {
+/**
+ * Dashboard component
+ * @param param0 - axisVisible and setAxisVisible properties
+ * @returns - the Dashboard component
+ */
+function Dashboard({axisVisible, setAxisVisible}: any) {
   const [baudRate, setBaudRate] = useState(BaudRates[0]);
   const [devices, setDevices] = useState<DeviceInfo[]>([]);
   const [angle, setAngle] = useState(50);
@@ -23,7 +29,9 @@ function Dashboard() {
   const [isConnected, setIsConnected] = useState(false);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const [readMode, setReadMode] = useState<'random' | 'increment'>('increment');
+  const [orbitCamera, setOrbitCamera] = useState<'left' | 'right' | null>(null);
 
+  // Fetch available devices on mount
   useEffect(() => {
     // fetch the available devices
     const fetchDevices = async () => {
@@ -56,7 +64,10 @@ function Dashboard() {
     setSelectedDevice(event.target.value);
   };
 
-
+  /**
+   * Handles the read mode changing value
+   * @param event - the read mode value
+   */
   const handleReadModeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setReadMode(event.target.value as 'random' | 'increment');
   };
@@ -87,8 +98,8 @@ function Dashboard() {
     setIsConnected(false);
   };
 
-  /**
-   * Updates the Intervale
+   /**
+   * Updates the interval of data reading based on the current baud rate
    */
   const updateInterval = () => {
     if (intervalId) {
@@ -97,52 +108,55 @@ function Dashboard() {
 
     const interval = (baudRate / 115200) * 1000;
     const newIntervalId = setInterval(
-      readData(selectedDevice,readMode, setAngle),
+      readData(selectedDevice, readMode, setAngle),
       interval
     ) as unknown as NodeJS.Timeout;
     setIntervalId(newIntervalId);
   };
 
+  /**
+   * Starts the orbit rotation in the specified direction
+   * @param direction - 'left' or 'right'
+   */
+  const handleOrbitMouseDown = (direction: 'left' | 'right') => {
+    setOrbitCamera(direction);
+  };
+  
+  /**
+   * Stops the orbit rotation
+   */
+  const handleOrbitMouseUp = () => {
+    setOrbitCamera(null);
+  };
+
   return (
     <div className="container-fluid d-flex flex-column flex-grow-1">
-
       <div className="row flex-grow-1 align-items-center custom-row">
         <div className="col-10 col-sm-10 col-md-10 col-lg-10 col-xl-3 d-flex flex-column serial-port-section ">
           <div className="my-auto">
             <h5 className="text-center">Serial Port</h5>
-  
+
             <Devices
               devices={devices}
               isConnected={isConnected}
               selectedDevice={selectedDevice}
               handleDeviceChange={handleDeviceChange}
             />
-  
+
             <BaudRate
               baudRate={baudRate}
               isConnected={isConnected}
               handleBaudRateChange={handleBaudRateChange}
               isDeviceSelected={selectedDevice !== null}
             />
-  
+
             <ReadMode
               readMode={readMode}
               isConnected={isConnected}
               handleReadModeChange={handleReadModeChange}
               isDeviceSelected={selectedDevice !== null}
             />
-  
-            <div className="col-md-10 mx-auto">
-              <label htmlFor="current-angle-input">Current Cube Angle:</label>
-              <input
-                type="text"
-                className="form-control custom-select"
-                id="current-angle-input"
-                value={`${angle.toFixed(1)}°`}
-                readOnly
-              />
-            </div>
-  
+
             <Connect
               isConnected={isConnected}
               connect={connect}
@@ -151,30 +165,51 @@ function Dashboard() {
             />
           </div>
         </div>
-  
-        <div className="col-10 col-sm-10 col-md-10 col-lg-8 col-xl-8 cube-section">
 
-            <div className="col-12 text-center mb-5">
-              <h2 className="major-mono-display">N-Cubotics</h2>
-              <span className="sub-title">
-                Bringing your cube to life, one degree at a time
-              </span>
+        <div className="col-10 col-sm-10 col-md-10 col-lg-8 col-xl-8 cube-section">
+          <div className="col-12 text-center mb-5">
+            <h2 className="major-mono-display">N-Cubotics</h2>
+            <span className="sub-title">
+              Bringing your cube to life, one degree at a time:{" "}
+              <span className="angle">{`${angle.toFixed(1)}°`}</span>
+            </span>
+          </div>
+
+          <div className="col-12 canvas">
+            <Suspense fallback={null}>
+              <Canvas shadows>
+                <spotLight position={[-8, 0, 0]} intensity={1.5} />
+                <spotLight position={[8, 0, 0]} intensity={0.2} />
+                {/* <ambientLight intensity={2} /> */}
+                <Cube
+                  angle={angle}
+                  baudRate={baudRate}
+                  readMode={readMode}
+                  orbitCamera={orbitCamera}
+                />
+                {axisVisible && <Axis />}
+              </Canvas>
+            </Suspense>
+          </div>
+          <div className="row flex-grow-1">
+            <div className="col-12 d-flex justify-content-center mb-3">
+              <button
+                onMouseDown={() => handleOrbitMouseDown("left")}
+                onMouseUp={handleOrbitMouseUp}
+              >
+                Orbit left
+              </button>
+              <button onClick={() => setAxisVisible(!axisVisible)}>
+                Toggle Axis
+              </button>
+              <button
+                onMouseDown={() => handleOrbitMouseDown("right")}
+                onMouseUp={handleOrbitMouseUp}
+              >
+                Orbit right
+              </button>
             </div>
-  
-            <div className="row flex-grow-1">
-              <div className="col-12 canvas">
-                <Suspense fallback={null}>
-                  <Canvas shadows>
-                    <spotLight position={[0.2, 10, 1]} intensity={2} />
-                    <Cube
-                      angle={angle}
-                      baudRate={baudRate}
-                      readMode={readMode}
-                    />
-                  </Canvas>
-                </Suspense>
-              </div>
-            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,9 +1,9 @@
-import { PerspectiveCamera } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as TWEEN from '@tweenjs/tween.js';
 import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
-
+import  CameraControls from './camera';
 
 type CubeProps = {
   angle: number;
@@ -11,6 +11,7 @@ type CubeProps = {
   shadows?: boolean;
   baudRate: number;
   readMode: 'increment' | 'random';
+  orbitCamera: 'left' | 'right' | null;
 };
 
 interface Rotation {
@@ -18,30 +19,47 @@ interface Rotation {
 }
 
 /**
- * The Cube class
+ * Cube component
  * @param param0 
  * @returns - the Cube object
  */
-const Cube = ({ angle, baudRate, readMode, ...rest }: CubeProps) => {
+function Cube ({ angle, baudRate, readMode, orbitCamera, ...rest }: CubeProps) {
+  // Create references for the mesh, current rotation, and tween
   const cubeAnimationRef = useRef<THREE.Mesh>(null);
   const currentRotationRef = useRef(0);
   const tweenRef = useRef<TWEEN.Tween<Rotation> | null>(null);
-  // Apply the texture
+
+  // Load the texture for the cube
   const texture = useMemo(() => new THREE.TextureLoader().load('/rouf.jpg'), []);
-  // Make use of the baudrate value to make the animation precise
+
+  // Calculate the duration of the transition based on the baud rate and read mode
   const baseDuration = readMode === 'random' ? 1000 : 100;
   const transitionDuration = baseDuration / (baudRate / 9600);
 
+  // Access the camera from the three.js scene
+  const { camera } = useThree();
+
+  // Set the camera position and rotation for the Right-Hand coordinate system
+  useEffect(() => {
+    camera.position.set(-8, 0, 0);
+    camera.up.set(0, 0, 1);
+  }, [camera]);
+
+  // If the angle has changed, create and start the tween animation
   useEffect(() => {
     if (cubeAnimationRef.current && currentRotationRef.current !== angle) {
       if (tweenRef.current) {
         tweenRef.current.stop();
       }
-      // defined rotation orientation
-      const startRotation = { z: cubeAnimationRef.current.rotation.z };
-      const targetRotation = { z: -THREE.MathUtils.degToRad(angle) };
 
-      // create animation with Tween.js for smooth rotation
+      // Calculate the shortest angle for the rotation
+      const startRotation = { z: cubeAnimationRef.current.rotation.z };
+      const targetAngleRad = -THREE.MathUtils.degToRad(angle);
+      const diff = (targetAngleRad - startRotation.z) % (2 * Math.PI);
+      const shortestAngle = ((diff + 3 * Math.PI) % (2 * Math.PI)) - Math.PI;
+      const targetRotation = { z: startRotation.z + shortestAngle };
+
+      // Create the tween animation for smooth rotation
       tweenRef.current = new TWEEN.Tween(startRotation)
         .to(targetRotation, transitionDuration)
         .easing(TWEEN.Easing.Sinusoidal.Out)
@@ -50,30 +68,26 @@ const Cube = ({ angle, baudRate, readMode, ...rest }: CubeProps) => {
             cubeAnimationRef.current.rotation.z = startRotation.z;
           }
         })
+        .onComplete(() => {
+          currentRotationRef.current = angle;
+        })
         .start();
-      currentRotationRef.current = angle;
     }
   }, [angle, transitionDuration]);
 
-
-  useFrame(({ camera }) => {
+  // Update the tween animation on every frame
+  useFrame(() => {
     TWEEN.update();
-    const cubeAnimation = cubeAnimationRef.current;
-    
-    if (cubeAnimation) {
-      // Update camera position and rotation to Right-Hand coordinate system (+x -> forward, +y ->left, +z -> up)
-      camera.position.set(0, 8, 0);
-      camera.up.set(0, 0, 1);
-      camera.lookAt(cubeAnimation.position);
-    }
   });
-
+  
   return (
     <>
       <PerspectiveCamera makeDefault fov={20} />
-      <mesh rotation={[0, 0, Math.PI / 4]} ref={cubeAnimationRef}>
+      <OrbitControls autoRotate={false} enableZoom={false} enablePan={false} />
+      <CameraControls orbitCamera={orbitCamera} />
+      <mesh name="cubeAnimation" rotation={[0, 0, Math.PI / 4]} ref={cubeAnimationRef}>
         <boxGeometry args={[2, 2, 2]} />
-        <meshLambertMaterial emissive="#000000" reflectivity={0.886} combine={THREE.MultiplyOperation} vertexColors={false} /* wireframe={true} */ map={texture} />
+        <meshLambertMaterial emissive="#000000" reflectivity={0.886} combine={THREE.MultiplyOperation} vertexColors={false} map={texture} />
       </mesh>
     </>
   );

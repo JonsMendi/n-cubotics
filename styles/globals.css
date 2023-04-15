@@ -21,6 +21,10 @@ span.sub-title {
   color: rgb(110, 110, 110);
 }
 
+span.angle {
+  color: #50529D;
+}
+
 .form-select {
   cursor: pointer;
 }
@@ -47,10 +51,15 @@ span.sub-title {
   background-color: transparent;
 }
 
-/* .custom-select option {
-  background-color: transparent;
+.custom-select option {
+  background-color: rgb(110, 110, 110);
   color: white;
-} */
+}
+
+input.custom-select:disabled {
+  border:2px solid white;
+  color: #50529D;
+}
 
 .button-connection {
   padding: 10px 20px;
@@ -78,6 +87,10 @@ span.sub-title {
     0 0 20px #50529D,
     0 0 50px #50529D,
     0 0 100px #50529D;
+}
+
+.footer-section {
+  min-height: 40px;
 }
 
 .footer-portfolio {
