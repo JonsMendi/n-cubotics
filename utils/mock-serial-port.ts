@@ -16,7 +16,7 @@ class MockSerialPort {
   // A static method that returns a list of mocked devices
   static list(): Promise<any> {
     return Promise.resolve(
-      MockSerialPort.devices.map((device, index) => ({
+      MockSerialPort.devices?.map((device, index) => ({
         path: device,
         vendorId: `0x${index + 1}`,
         productId: `0x${index + 1}`,

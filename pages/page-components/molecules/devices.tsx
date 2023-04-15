@@ -32,7 +32,7 @@ function Devices({devices, isConnected, selectedDevice, handleDeviceChange}: Dev
           <option value="" disabled>
             Select a device
           </option>
-          {devices.map((device) => (
+          {devices?.map((device) => (
             <option key={device.path} value={device.path}>
               {device.path}
             </option>

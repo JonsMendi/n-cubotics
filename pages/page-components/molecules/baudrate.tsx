@@ -25,7 +25,7 @@ function BaudRate({baudRate, isConnected, handleBaudRateChange, isDeviceSelected
           onChange={handleBaudRateChange}
           disabled={!isDeviceSelected || isConnected}
         >
-          {BaudRates.map((rate) => (
+          {BaudRates?.map((rate) => (
             <option key={rate} value={rate}>
               {rate}
             </option>

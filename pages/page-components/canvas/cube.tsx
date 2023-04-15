@@ -82,13 +82,15 @@ function Cube ({ angle, baudRate, readMode, orbitCamera, ...rest }: CubeProps) {
   
   return (
     <>
-      <PerspectiveCamera makeDefault fov={20} />
-      <OrbitControls autoRotate={false} enableZoom={false} enablePan={false} />
-      <CameraControls orbitCamera={orbitCamera} />
-      <mesh name="cubeAnimation" rotation={[0, 0, Math.PI / 4]} ref={cubeAnimationRef}>
-        <boxGeometry args={[2, 2, 2]} />
-        <meshLambertMaterial emissive="#000000" reflectivity={0.886} combine={THREE.MultiplyOperation} vertexColors={false} map={texture} />
-      </mesh>
+      <group>
+        <PerspectiveCamera makeDefault fov={20} />
+        <OrbitControls autoRotate={false} enableZoom={false} enablePan={false} />
+        <CameraControls orbitCamera={orbitCamera} />
+        <mesh name="cubeAnimation" rotation={[0, 0, Math.PI / 4]} ref={cubeAnimationRef}>
+          <boxGeometry args={[2, 2, 2]} />
+          <meshLambertMaterial emissive="#000000" reflectivity={0.886} combine={THREE.MultiplyOperation} vertexColors={false} map={texture} />
+        </mesh>
+      </group>
     </>
   );
 };
