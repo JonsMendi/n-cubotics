@@ -1,27 +1,15 @@
 import { OrbitControls } from '@react-three/drei';
-/* import { Canvas } from '@react-three/fiber'; */
+import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { connectToSerialPort, readData, updateBaudRate } from '../../../utils/serial-port-handlers';
-import Axis from '../../../components/canvas/axis';
-/* import CameraControls from '../canvas/camera';
-import Cube from '../canvas/cube'; */
+import Axis from '../canvas/axis';
+import CameraControls from '../canvas/camera';
+import Cube from '../canvas/cube';
 import BaudRate from '../molecules/baudrate';
 import Connect from '../molecules/connect';
 import Devices from '../molecules/devices';
 import ReadMode from '../molecules/readmode';
-import dynamic from 'next/dynamic';
-
-const Canvas = dynamic(
-  () => import('@react-three/fiber').then((mod) => mod.Canvas),
-  { ssr: false }
-);
-
-const Cube = dynamic(() => import('../../../components/canvas/cube'), { ssr: false });
-
-const CameraControls = dynamic(() => import('../../../components/canvas/camera'), {
-  ssr: false,
-});
 
 const BaudRates = [9600, 19200, 38400, 57600, 115200];
 
