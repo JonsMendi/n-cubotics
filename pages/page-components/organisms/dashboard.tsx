@@ -200,6 +200,7 @@ function Dashboard({axisVisible, setAxisVisible}: any) {
                   baudRate={baudRate}
                   readMode={readMode}
                   cubeAnimationRef={cubeAnimationRef}
+                  defaultAngle={0} 
                 />
                 {axisVisible && <Axis />}
               </Canvas>

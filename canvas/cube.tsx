@@ -11,6 +11,7 @@ type CubeProps = {
   baudRate: number;
   readMode: 'increment' | 'random';
   cubeAnimationRef: RefObject<THREE.Mesh>;
+  defaultAngle?: number; 
 };
 
 interface Rotation {
@@ -22,7 +23,7 @@ interface Rotation {
  * @param param0 
  * @returns - the Cube object
  */
-function Cube ({ angle, baudRate, readMode, cubeAnimationRef }: CubeProps) {
+function Cube ({ angle, baudRate, readMode, cubeAnimationRef, defaultAngle = 0, }: CubeProps) {
   // Create references for the mesh, current rotation, and tween
   const currentRotationRef = useRef(0);
   const tweenRef = useRef<TWEEN.Tween<Rotation> | null>(null);
@@ -33,6 +34,10 @@ function Cube ({ angle, baudRate, readMode, cubeAnimationRef }: CubeProps) {
 
   // Access the camera from the three.js scene
   const { camera } = useThree();
+
+  useEffect(() => {
+    currentRotationRef.current = defaultAngle;
+  }, [defaultAngle]);
 
   // Set the camera position and rotation for the Right-Hand coordinate system
   useEffect(() => {
