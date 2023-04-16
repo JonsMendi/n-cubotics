@@ -3,10 +3,6 @@
 
 This is a web application built with Next.js and Typescript that displays a 3D cube using Three.js. The cube can be connected to a device through a serial port, using the SerialPort library. A list of possible mock devices is provided, including "Arduino", "Raspberry Pi" and "ESP32". The connected device will emit values between 0 and 360 degrees, which will cause the cube to rotate accordingly.
 
-## Live Demo
-
-Check out the live demo [here](https://your-demo-url.com).
-
 ## Usage
 
 To use the app, follow these steps:
@@ -15,8 +11,9 @@ To use the app, follow these steps:
 2. Select the baud rate (either "9600", "19200", "38400", "57600" or "115200")
 3. Select the read mode (either "Random" or "Increment")
 4. Click "Connect" to activate the device and start receiving values
-5. Use the orbit camera to view the cube from different angles
-6. To switch to a different device, baud rate, or read mode, first click "Disconnect" the current device, then choose a new device and settings, and click "Connect" again.
+5. To switch to a different device, baud rate, or read mode, first click "Disconnect" the current device, then choose a new device and settings, and click "Connect" again.
+6. Click "Orbit" to use the camera to view the cube from different angles
+7. Click "Toogle Axis" to visualize the axis in the space
 
 ## Technologies Used
 
