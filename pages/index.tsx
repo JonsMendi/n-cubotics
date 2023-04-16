@@ -1,8 +1,8 @@
 import Head from "next/head";
-import Dashboard from "./page-components/organisms/dashboard";
-import TopBar from "./page-components/organisms/topbar";
-import Footer from "./page-components/organisms/footer";
 import { useState } from "react";
+import CanvasWrapper from "./page-components/canvas/canvas-wrapper";
+import Footer from "./page-components/organisms/footer";
+import TopBar from "./page-components/organisms/topbar";
 
 export default function Home() {
   const [axisVisible, setAxisVisible] = useState(false);
@@ -18,10 +18,7 @@ export default function Home() {
         </Head>
         <main className="d-flex flex-column h-100 flex-grow-1">
           <TopBar />
-          <Dashboard
-            axisVisible={axisVisible}
-            setAxisVisible={setAxisVisible}
-          />
+          <CanvasWrapper axisVisible={axisVisible} setAxisVisible={setAxisVisible} />
         </main>
         <Footer axisVisible={axisVisible} />
       </div>
