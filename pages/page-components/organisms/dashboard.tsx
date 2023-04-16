@@ -3,7 +3,7 @@ import { OrbitControls } from '@react-three/drei';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { connectToSerialPort, readData, updateBaudRate } from '../../../utils/serial-port-handlers';
-import Axis from '../canvas/axis';
+import Axis from '../../../components/canvas/axis';
 /* import CameraControls from '../canvas/camera';
 import Cube from '../canvas/cube'; */
 import BaudRate from '../molecules/baudrate';
@@ -17,9 +17,9 @@ const Canvas = dynamic(
   { ssr: false }
 );
 
-const Cube = dynamic(() => import('../canvas/cube'), { ssr: false });
+const Cube = dynamic(() => import('../../../components/canvas/cube'), { ssr: false });
 
-const CameraControls = dynamic(() => import('../canvas/camera'), {
+const CameraControls = dynamic(() => import('../../../components/canvas/camera'), {
   ssr: false,
 });
 

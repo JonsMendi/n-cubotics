@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useState } from "react";
-import CanvasWrapper from "./page-components/canvas/canvas-wrapper";
+import CanvasWrapper from "../components/canvas/canvas-wrapper";
 import Footer from "./page-components/organisms/footer";
 import TopBar from "./page-components/organisms/topbar";
 
