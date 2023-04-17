@@ -16,7 +16,7 @@ function Footer({ axisVisible }: any) {
               &copy; {new Date().getFullYear()} João Borges Mendonça. All rights
               reserved. &nbsp;|&nbsp;
               <Link
-                href="https://jonsmendi.github.io/3d-portfolio-joaobmendonca/"
+                href="https://3d-portfolio-joaobmendonca.vercel.app/"
                 passHref
                 target="_blank"
                 className="footer-portfolio"
