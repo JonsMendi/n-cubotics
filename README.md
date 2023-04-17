@@ -2,10 +2,9 @@
 ## 3D Cube with Serial Port Connection
 
 This is a web application built with Next.js and Typescript that displays a 3D cube using Three.js. The cube can be connected to a device through a serial port, using the SerialPort library. A list of possible mock devices is provided, including "Arduino", "Raspberry Pi" and "ESP32". The connected device will emit values between 0 and 360 degrees, which will cause the cube to rotate accordingly.
-
 ## Live Demo
 
-Check out the [live demo](https://n-cubotics.vercel.app/) of this app.
+Check out the [live demo](https://your-demo-url.com) of this app. Please note that the app may not work exactly the same as when running the project locally due to differences in environment and configuration.
 
 ## Usage
 
