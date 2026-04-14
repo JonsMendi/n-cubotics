@@ -1,6 +1,3 @@
-import { Readable, Writable } from "stream";
-import SerialPort, { BaseBinding } from "serialport";
-
 // A mock implementation of the SerialPort library for testing purposes
 class MockSerialPort {
   static devices = ["Arduino", "Raspberry Pi", "ESP32"];
@@ -9,7 +6,7 @@ class MockSerialPort {
   static currentValue = 0;
   static readMode: 'random' | 'increment' = 'random';
 
-  constructor(options: SerialPort.OpenOptions) {
+  constructor(options: { baudRate?: number }) {
     MockSerialPort.selectedBaudRate = options.baudRate || null;
   }
 
@@ -80,14 +77,25 @@ class MockSerialPort {
   }
 }
 
-// A binding that extends the BaseBinding interface from the SerialPort library
-interface MockBinding extends BaseBinding {
+// A binding interface for the mock serial port
+interface MockBinding {
   Binding: typeof MockSerialPort;
+  open: () => Promise<void>;
+  close: () => Promise<void>;
+  read: (buffer: Buffer, offset: number, length: number) => Promise<any>;
+  write: (buffer: Buffer) => Promise<any>;
+  update: (options: { baudRate: number }) => Promise<void>;
+  set: () => Promise<void>;
+  get: () => Promise<any>;
+  drain: () => Promise<void>;
+  flush: () => Promise<void>;
+  list: () => Promise<any>;
 }
 
 const MockBinding: MockBinding = {
   Binding: MockSerialPort,
   ...MockSerialPort,
+  list: MockSerialPort.list,
   open: MockSerialPort.prototype.open,
   close: MockSerialPort.prototype.close,
   // Override the read method to use the read mode defined in the MockSerialPort class

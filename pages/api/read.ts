@@ -1,8 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import SerialPort from "serialport";
 import MockBinding from "../../utils/mock-serial-port";
-
-(SerialPort.Binding as any) = MockBinding.Binding;
 
 /**
  * Handler that reads the device values
@@ -17,9 +14,9 @@ export default async function handler(
     const { devicePath, readMode } = req.body;
 
     try {
-      const port = new SerialPort(devicePath);
+      MockBinding.Binding.readMode = readMode || 'random';
       const buffer = Buffer.alloc(4);
-      const result = await ((port.binding as unknown) as typeof MockBinding.Binding.prototype).read(buffer, 0, 4, readMode);
+      await MockBinding.read(buffer, 0, 4);
       const angle = buffer.readInt32LE(0);
 
       res.status(200).json({ angle });
