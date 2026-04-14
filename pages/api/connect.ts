@@ -1,8 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import SerialPort from "serialport";
 import MockBinding from "../../utils/mock-serial-port";
-
-(SerialPort.Binding as any) = MockBinding.Binding;
 
 /**
  * Handler to connect to the device
@@ -17,8 +14,9 @@ export default async function handler(
     const { devicePath, baudRate } = req.body;
 
     try {
-      const port = new SerialPort(devicePath, { baudRate, autoOpen: false });
-      await port.open();
+      MockBinding.Binding.selectedDevice = devicePath;
+      MockBinding.Binding.selectedBaudRate = baudRate;
+      await MockBinding.open();
 
       res.status(200).json({ message: "Connected to the device successfully" });
       return;
