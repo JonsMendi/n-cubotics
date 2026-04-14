@@ -95,6 +95,7 @@ interface MockBinding {
 const MockBinding: MockBinding = {
   Binding: MockSerialPort,
   ...MockSerialPort,
+  list: MockSerialPort.list,
   open: MockSerialPort.prototype.open,
   close: MockSerialPort.prototype.close,
   // Override the read method to use the read mode defined in the MockSerialPort class
